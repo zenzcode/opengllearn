@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.10)
+
+project(Soil)
+include_directories(include)
+set(SOURCES 
+    src/image_dxt.c 
+    src/image_helper.c 
+    src/soil.c 
+    src/stb_image_aug.c 
+    src/original/stb_image-1.16.c
+)
+
+add_library(Soil ${SOURCES})
