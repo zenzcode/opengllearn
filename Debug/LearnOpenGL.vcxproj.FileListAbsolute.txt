@@ -2,3 +2,5 @@ D:\Coding\GameDev\OpenGL\LearnOpenGL\Debug\LearnOpenGL.exe
 D:\Coding\GameDev\OpenGL\LearnOpenGL\Debug\LearnOpenGL.pdb
 E:\Coding\OpenGLBasics\LearnOpenGL\Debug\LearnOpenGL.exe
 E:\Coding\OpenGLBasics\LearnOpenGL\Debug\LearnOpenGL.pdb
+D:\Coding\GameDev\OpenGL\opengllearn\Debug\LearnOpenGL.exe
+D:\Coding\GameDev\OpenGL\opengllearn\Debug\LearnOpenGL.pdb

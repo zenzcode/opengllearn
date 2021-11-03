@@ -11,7 +11,7 @@
 #include "Window.h"
 #include "Camera.h"
 #include "Texture.h"
-#include "Light.h"
+#include "DirectionalLight.h"
 #include "Material.h"
 
 static const char* vertex = "Shaders/shader.vert";
@@ -28,7 +28,7 @@ GLfloat lastTime = 0.0f;
 Texture brickTexture;
 Texture dirtTexture;
 
-Light mainLight;
+DirectionalLight mainLight;
 Material shinyMaterial;
 Material dullMaterial;
 
@@ -114,7 +114,7 @@ int main()
 	brickTexture.LoadTexture();
 	dirtTexture = Texture((char*)"Images/dirt.png");
 	dirtTexture.LoadTexture();
-	mainLight = Light(1.f, 1.f, 1.f, .1f, 2.f, -1.f, -2.f, 1.f);
+	mainLight = DirectionalLight(1.f, 1.f, 1.f, .1f, 2.f, -1.f, -2.f, 1.f);
 	shinyMaterial = Material(1.f, 32.f);
 	dullMaterial = Material(.3f, 4.f);
 	glm::mat4x4 projection = glm::perspective(45.f, mainWindow->GetBufferWidth() / mainWindow->GetBufferHeight(), 0.1f, 100.f);
