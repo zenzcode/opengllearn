@@ -10,11 +10,17 @@ in vec3 FragPos;
 
 uniform sampler2D textureIn;
 
-struct DirectionalLight{
+const int MAX_POINT_LIGHTS = 3;
+
+struct Light{
 	vec3 color;
 	float ambientIntensity; 
-	vec3 direction;
 	float diffuseIntensity;
+}
+
+struct DirectionalLight{
+	Light base;
+	vec3 direction;
 };
 
 struct Material{
@@ -34,7 +40,7 @@ void main() {
 	vec4 specularColor = vec4(0, 0, 0, 0);
 	if(diffuseFactor > 0.0f){
 		vec3 fragToEye = normalize(eyePosition - FragPos);
-		vec3 reflectedVertex = normalize(reflect(directionalLight.direction, normalize(Normal)));
+		vec3 reflectedVertex = normalize(reflect(-directionalLight.direction, normalize(Normal)));
 		float specularFactor = dot(fragToEye, reflectedVertex);
 		if(specularFactor > 0){
 			specularFactor = pow(specularFactor, material.shininess);

@@ -63,13 +63,12 @@ void CalcAverageNormals(unsigned int* indices, unsigned int numOfIndices, GLfloa
 
 void CreateObjects() { 
 	unsigned int indices[] = {
-		0, 1, 2,
+		1, 0, 2,
 		3, 4, 2,
-		3, 0, 2,
 		4, 1, 2,
-		0, 1, 4,
-		0, 3, 4,
-		1, 3, 0
+		0, 3, 2,
+		1, 4, 3,
+		1, 3, 0,
 	};
 
 	GLfloat vertices[] = {
@@ -81,18 +80,18 @@ void CreateObjects() {
 		.5f, -.5f, 0.f,		0.5f, 0.f,		0.f, 0.f, 0.f
 	};
 
-	CalcAverageNormals(indices, 21, vertices, 48, 8, 5);
+	CalcAverageNormals(indices, 18, vertices, 48, 8, 5);
 
 	Mesh* obj1 = new Mesh();
-	obj1->CreateMesh(vertices, indices, 48, 21);
+	obj1->CreateMesh(vertices, indices, 48, 18);
 	meshList.emplace_back(obj1);
 
 	Mesh* obj2 = new Mesh();
-	obj2->CreateMesh(vertices, indices, 48, 21);
+	obj2->CreateMesh(vertices, indices, 48, 18);
 	meshList.emplace_back(obj2);
 
 	Mesh* obj3 = new Mesh();
-	obj3->CreateMesh(vertices, indices, 48, 21);
+	obj3->CreateMesh(vertices, indices, 48, 18);
 	meshList.emplace_back(obj3);
 }
 
@@ -114,16 +113,20 @@ int main()
 	brickTexture.LoadTexture();
 	dirtTexture = Texture((char*)"Images/dirt.png");
 	dirtTexture.LoadTexture();
-	mainLight = DirectionalLight(1.f, 1.f, 1.f, .1f, 2.f, -1.f, -2.f, 1.f);
+	mainLight = DirectionalLight(1.f, 1.f, 1.f, .1f, 2.f, 2.f, -2.f, 1.f);
 	shinyMaterial = Material(1.f, 32.f);
 	dullMaterial = Material(.3f, 4.f);
 	glm::mat4x4 projection = glm::perspective(45.f, mainWindow->GetBufferWidth() / mainWindow->GetBufferHeight(), 0.1f, 100.f);
+
+	glEnable(GL_CULL_FACE);
 
 	while (!mainWindow->GetShouldClose()) {
 
 		GLfloat now = glfwGetTime();
 		deltaTime = now - lastTime;
 		lastTime = now;
+
+		glCullFace(GL_BACK);
 
 		glfwPollEvents();
 		glClearColor(.125, .125, .125, 1);
@@ -138,7 +141,7 @@ int main()
 		glUniformMatrix4fv(shaderList[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(shaderList[0]->GetViewLocation(), 1, GL_FALSE, glm::value_ptr(camera->calculateViewMatrix()));
 		glUniform3f(shaderList[0]->GetUniformEyePosition(), camera->GetCameraPosition().x, camera->GetCameraPosition().y, camera->GetCameraPosition().z);
-		mainLight.UseLight(shaderList[0]->GetAmbientIntensityLocation(), shaderList[0]->GetAmbientColorLocation(), shaderList[0]->GetUniformDiffuseIntensity(), shaderList[0]->GetUniformDirection());
+		shaderList[0]->SetDirectionalLight(&mainLight);
 		glm::mat4x4 model = glm::mat4x4(1.f);
 		model = glm::translate(model, glm::vec3(1.2f, 0.f, -3.f));
 		glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));

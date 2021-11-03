@@ -4,8 +4,8 @@
 Window::Window() {
 	width = 800;
 	height = 600;
-	xChange = 0;
-	yChange = 0;
+	xChange = 0.f;
+	yChange = 0.f;
 
 	for (size_t i = 0; i < 1024; ++i) {
 		keys[i] = false;
