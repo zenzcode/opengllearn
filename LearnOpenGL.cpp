@@ -14,6 +14,7 @@
 #include "Texture.h"
 #include "PointLight.h"
 #include "DirectionalLight.h"
+#include "SpotLight.h"
 #include "Material.h"
 
 static const char* vertex = "Shaders/shader.vert";
@@ -32,6 +33,7 @@ Texture dirtTexture;
 
 DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
+SpotLight spotLights[MAX_SPOT_LIGHTS];
 
 Material shinyMaterial;
 Material dullMaterial;
@@ -137,11 +139,17 @@ int main()
 
 	unsigned int pointLightCount = 0;
 	
-	pointLights[0] = PointLight(0.0f, 1.0f, 0.0f, 1.0f, -4.f, 0.f, 0.f, 1.f, 0.3f, 0.2f, 0.1f);
+	pointLights[0] = PointLight(0.0f, 1.0f, 0.0f, 1.0f, -4.f, 0.f, 0.f, .5f, 0.3f, 0.2f, 0.1f);
 	pointLightCount++;
 		
-	pointLights[1] = PointLight(0.0f, 0.0f, 1.0f, 1.f, 4.f, 0.f, 0.f, .3f, 0.3f, 0.1f, 0.1f);
+	pointLights[1] = PointLight(0.0f, 0.0f, 1.0f, 1.0f, 4.f, 0.f, 0.f, .5f, 0.3f, 0.1f, 0.1f);
 	pointLightCount++;
+
+	unsigned int spotLightCount = 0;
+
+	spotLights[0] = SpotLight(1.f, 1.f, 1.f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.3f, 0.2f, 0.1f, 30.0f);
+
+	spotLightCount++;
 
 
 	shinyMaterial = Material(1.f, 265.f);
@@ -171,8 +179,12 @@ int main()
 		glUniformMatrix4fv(shaderList[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(shaderList[0]->GetViewLocation(), 1, GL_FALSE, glm::value_ptr(camera->calculateViewMatrix()));
 		glUniform3f(shaderList[0]->GetUniformEyePosition(), camera->GetCameraPosition().x, camera->GetCameraPosition().y, camera->GetCameraPosition().z);
+		glm::vec3 lowerLight = camera->GetCameraPosition();
+		lowerLight.y -= 0.3f;
+		spotLights[0].SetFlash(lowerLight, camera->GetCameraDirection());
 		shaderList[0]->SetDirectionalLight(&mainLight);
 		shaderList[0]->SetPointLight(pointLights, pointLightCount);
+		shaderList[0]->SetSpotLight(spotLights, spotLightCount);
 		glm::mat4x4 model = glm::mat4x4(1.f);
 		model = glm::translate(model, glm::vec3(1.2f, 0.f, -3.f));
 		glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
