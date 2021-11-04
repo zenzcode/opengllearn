@@ -1,10 +1,5 @@
-﻿  Window.cpp
+﻿  LearnOpenGL.cpp
 D:\Coding\GameDev\OpenGL\opengllearn\Window.h(12,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
 D:\Coding\GameDev\OpenGL\opengllearn\Window.h(15,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.cpp(112,19): warning C4244: "=": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.cpp(113,19): warning C4244: "=": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.cpp(119,29): warning C4244: "=": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.cpp(120,20): warning C4244: "=": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.cpp(121,18): warning C4244: "=": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.cpp(122,18): warning C4244: "=": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(155,15): warning C4244: "Initialisierung": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
   LearnOpenGL.vcxproj -> D:\Coding\GameDev\OpenGL\opengllearn\Debug\LearnOpenGL.exe

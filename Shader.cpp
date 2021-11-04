@@ -141,7 +141,6 @@ void Shader::ClearShader() {
 void Shader::SetPointLight(PointLight* pLight, unsigned int lightCount) {
 	if (lightCount > MAX_POINT_LIGHTS) lightCount = MAX_POINT_LIGHTS;
 	glUniform1i(uniformPointLightCount, lightCount);
-	pointLightCount = lightCount;
 	for (size_t i = 0; i < lightCount; ++i) {
 		pLight[i].UseLight(uniformPointLight[i].uniformAmbientIntensity, uniformPointLight[i].uniformColor, uniformPointLight[i].uniformDiffuseIntensity, uniformPointLight[i].uniformPosition, uniformPointLight[i].uniformConstant, uniformPointLight[i].uniformLinear, uniformPointLight[i].uniformExponent);
 	}

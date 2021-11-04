@@ -6,11 +6,13 @@
 #include <gtc/matrix_transform.hpp>
 #include <vector>
 
+#include "CommonValues.h"
 #include "Mesh.h"
 #include "Shader.h"
 #include "Window.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "PointLight.h"
 #include "DirectionalLight.h"
 #include "Material.h"
 
@@ -29,6 +31,8 @@ Texture brickTexture;
 Texture dirtTexture;
 
 DirectionalLight mainLight;
+PointLight pointLights[MAX_POINT_LIGHTS];
+
 Material shinyMaterial;
 Material dullMaterial;
 
@@ -80,6 +84,18 @@ void CreateObjects() {
 		.5f, -.5f, 0.f,		0.5f, 0.f,		0.f, 0.f, 0.f
 	};
 
+	unsigned int floorIndices[]{
+		0, 2, 1,
+		1, 2, 3
+	};
+
+	GLfloat floorVertices[] = {
+		-10.0f, 0.f, -10.0f, 0.f, 0.f, 0.f, -1.f, 0.f,
+		10.f, 0.f, -10.f, 10.f, 0.f, 0.f, -1.f, 0.f,
+		-10.f, 0.f, 10.f, 0.f, 10.f, 0.f, -1.f, 0.f,
+		10.0f, 0.f, 10.f, 10.f, 10.f, 0.f, -1.f, 0.f
+	};
+
 	CalcAverageNormals(indices, 18, vertices, 48, 8, 5);
 
 	Mesh* obj1 = new Mesh();
@@ -93,6 +109,10 @@ void CreateObjects() {
 	Mesh* obj3 = new Mesh();
 	obj3->CreateMesh(vertices, indices, 48, 18);
 	meshList.emplace_back(obj3);
+
+	Mesh* obj4 = new Mesh();
+	obj4->CreateMesh(floorVertices, floorIndices, 32, 6);
+	meshList.emplace_back(obj4);
 }
 
 void CreateShaders() {
@@ -114,7 +134,17 @@ int main()
 	dirtTexture = Texture((char*)"Images/dirt.png");
 	dirtTexture.LoadTexture();
 	mainLight = DirectionalLight(1.f, 1.f, 1.f, .1f, 2.f, 2.f, -2.f, 1.f);
-	shinyMaterial = Material(1.f, 32.f);
+
+	unsigned int pointLightCount = 0;
+	
+	pointLights[0] = PointLight(0.0f, 1.0f, 0.0f, 1.0f, -4.f, 0.f, 0.f, 1.f, 0.3f, 0.2f, 0.1f);
+	pointLightCount++;
+		
+	pointLights[1] = PointLight(0.0f, 0.0f, 1.0f, 1.f, 4.f, 0.f, 0.f, .3f, 0.3f, 0.1f, 0.1f);
+	pointLightCount++;
+
+
+	shinyMaterial = Material(1.f, 265.f);
 	dullMaterial = Material(.3f, 4.f);
 	glm::mat4x4 projection = glm::perspective(45.f, mainWindow->GetBufferWidth() / mainWindow->GetBufferHeight(), 0.1f, 100.f);
 
@@ -142,6 +172,7 @@ int main()
 		glUniformMatrix4fv(shaderList[0]->GetViewLocation(), 1, GL_FALSE, glm::value_ptr(camera->calculateViewMatrix()));
 		glUniform3f(shaderList[0]->GetUniformEyePosition(), camera->GetCameraPosition().x, camera->GetCameraPosition().y, camera->GetCameraPosition().z);
 		shaderList[0]->SetDirectionalLight(&mainLight);
+		shaderList[0]->SetPointLight(pointLights, pointLightCount);
 		glm::mat4x4 model = glm::mat4x4(1.f);
 		model = glm::translate(model, glm::vec3(1.2f, 0.f, -3.f));
 		glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
@@ -164,6 +195,13 @@ int main()
 		glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
 		dirtTexture.UseTexture();
 		meshList[2]->RenderMesh();
+
+		shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
+		model = glm::mat4(1.f);
+		model = glm::translate(model, glm::vec3(0.f, -2.f, 0.f));
+		glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+		dirtTexture.UseTexture();
+		meshList[3]->RenderMesh();
 		glUniform1f(shaderList[0]->GetTextureUnitLocation(), 0);
 		glUseProgram(0);
 

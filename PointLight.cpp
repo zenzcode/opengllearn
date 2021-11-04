@@ -11,7 +11,7 @@ PointLight::PointLight(GLfloat red, GLfloat green, GLfloat blue, GLfloat aIntens
 	position = glm::vec3(posX, posY, posZ);
 	constant = con;
 	linear = lin;
-	this->exponential = exponential;
+	exponential = exp;
 }
 
 void PointLight::UseLight(GLfloat ambientIntensityLocation, GLfloat ambientColorLocation, GLfloat diffuseIntensityLocation, GLfloat positionLocation, GLfloat constantLocation, GLfloat linearLocation, GLfloat exponentialLocation) {
