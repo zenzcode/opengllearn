@@ -1,4 +1,5 @@
 #include <iostream>
+#include <array>
 #include <glew.h>
 #include <glfw3.h>
 #include <glm.hpp>
@@ -16,14 +17,23 @@
 #include "DirectionalLight.h"
 #include "SpotLight.h"
 #include "Material.h"
+#include "ModelLoader.h"
 
 static const char* vertex = "Shaders/shader.vert";
 static const char* frag = "Shaders/shader.frag";
+
+static const char* vertex2D = "Shaders/shader.vert2d";
+static const char* frag2D = "Shaders/Shader.frag2d";
+
+static const char* humvee = "Models/Humvee/Humvee.obj";
+static const char* plane = "Models/plane/11803_Airplane_v1_l1.obj";
 
 Window* mainWindow;
 std::vector<Mesh*> meshList;
 std::vector<Shader*> shaderList;
 Camera* camera;
+
+GLuint colorBuffer;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
@@ -37,6 +47,10 @@ SpotLight spotLights[MAX_SPOT_LIGHTS];
 
 Material shinyMaterial;
 Material dullMaterial;
+
+ModelLoader humveeModel;
+ModelLoader planeModel;
+GLuint windowVAO, windowVBO, windowIBO, windowFBO;
 
 void CalcAverageNormals(unsigned int* indices, unsigned int numOfIndices, GLfloat* vertices, unsigned int verticeCount, unsigned int vLength, unsigned int normalOffset) {
 	for (size_t i = 0; i < numOfIndices; i += 3) {
@@ -121,6 +135,36 @@ void CreateShaders() {
 	Shader* shader = new Shader();
 	shader->CreateFromFiles(vertex, frag);
 	shaderList.emplace_back(shader);
+	Shader* shader2D = new Shader;
+	shader2D->CreateFromFiles(vertex2D, frag2D);
+	shaderList.emplace_back(shader2D);
+}
+
+//gotta find a smarter way to do that... but later..
+void DrawMiniWindows() {
+	glEnable(GL_SCISSOR_TEST);
+	glScissor(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
+	glClear(GL_COLOR_BUFFER_BIT);
+	glDisable(GL_SCISSOR_TEST);
+
+
+	shaderList[1]->UseShader();	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, colorBuffer);
+	glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight() / 10);
+	glBindVertexArray(windowVAO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, windowIBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, windowFBO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glActiveTexture(0);
+	glUseProgram(0);
+
+
+	glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
 }
 
 int main()
@@ -132,9 +176,18 @@ int main()
 
 	camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.f, 0.f, 5.0f, 0.5f);
 	brickTexture = Texture((char*)"Images/brick.png");
-	brickTexture.LoadTexture();
+	brickTexture.LoadTextureA();
 	dirtTexture = Texture((char*)"Images/dirt.png");
-	dirtTexture.LoadTexture();
+	dirtTexture.LoadTextureA();
+
+	glGenTextures(1, &colorBuffer);
+
+	humveeModel = ModelLoader();
+	humveeModel.LoadModel(humvee);
+	
+	planeModel = ModelLoader();
+	planeModel.LoadModel(plane);
+
 	mainLight = DirectionalLight(1.f, 1.f, 1.f, .1f, 2.f, 2.f, -2.f, 1.f);
 
 	unsigned int pointLightCount = 0;
@@ -157,19 +210,65 @@ int main()
 	glm::mat4x4 projection = glm::perspective(45.f, mainWindow->GetBufferWidth() / mainWindow->GetBufferHeight(), 0.1f, 100.f);
 
 	glEnable(GL_CULL_FACE);
+	glBindTexture(GL_TEXTURE_2D, colorBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, mainWindow->GetWidth(), mainWindow->GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+
+
+	unsigned int indices[] = {
+	1, 0, 2,
+	1, 3, 2
+	};
+
+	GLfloat vertices[] = {
+		-1.f, -1.f, 0.f,	0.f, 0.f,	0.f, 0.f, 0.f, //bottom left
+		-1.f, 1.f, 0.f,		0.f, 0.f,	0.f, 0.f, 0.f, //top left
+		1.f, -1.f, 0.f,		1.f, 0.f,	0.f, 0.f, 0.f, //bottom right
+		1.f, 1.f, 0.f,		1.f, 1.f,	0.f, 0.f, 0.f //top right
+	};
+	glGenVertexArrays(1, &windowVAO);
+	glBindVertexArray(windowVAO);
+	glGenBuffers(1, &windowIBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, windowIBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &windowVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, windowVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glGenFramebuffers(1, &windowFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, windowFBO);
+
+	std::cout << "ColorBuffer: " << colorBuffer << std::endl;
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		std::cout << "Framebuffer not complete. Status:" << glCheckFramebufferStatus(GL_FRAMEBUFFER) << "\n Error: " << (GLenum)glGetError() << std::endl;
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	std::array<GLuint, 4> clearColor{ 1, 0, 0, 1 };
+	glClearBufferuiv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, clearColor.data());
+	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 
 	while (!mainWindow->GetShouldClose()) {
 
 		GLfloat now = glfwGetTime();
 		deltaTime = now - lastTime;
 		lastTime = now;
-
 		glCullFace(GL_BACK);
 
 		glfwPollEvents();
 		glClearColor(.125, .125, .125, 1);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
 
 		camera->keyControl(mainWindow->getKeys(), deltaTime);
 		camera->mouseControl(mainWindow->GetChangeX(), mainWindow->GetChangeY());
@@ -215,7 +314,26 @@ int main()
 		dirtTexture.UseTexture();
 		meshList[3]->RenderMesh();
 		glUniform1f(shaderList[0]->GetTextureUnitLocation(), 0);
+
+
+		shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
+		model = glm::mat4(1.f);
+		model = glm::translate(model, glm::vec3(-2.f, 0.f, 0.f));
+		model = glm::scale(model, glm::vec3(0.005f, 0.005f, 0.005f));
+		glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+		humveeModel.RenderModel();
+
+		shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
+		model = glm::mat4(1.f);
+		model = glm::translate(model, glm::vec3(4.f, 0.f, 0.f));
+		model = glm::rotate(model, glm::radians(-90.f), glm::vec3(1, 1, 0));
+		model = glm::scale(model, glm::vec3(0.001f, 0.001f, 0.001f));
+		glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+		planeModel.RenderModel();
 		glUseProgram(0);
+
+
+		DrawMiniWindows();
 
 		mainWindow->SwapBuffers();
 	}

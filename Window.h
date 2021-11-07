@@ -25,6 +25,14 @@ public:
 	GLfloat GetChangeX();
 	GLfloat GetChangeY();
 
+	inline GLfloat GetWidth() {
+		return width;
+	}
+
+	inline GLfloat GetHeight() {
+		return height;
+	}
+
 	inline void SwapBuffers() {
 		if (!mainWindow) return;
 		glfwSwapBuffers(mainWindow);

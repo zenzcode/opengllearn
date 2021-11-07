@@ -1,6 +1,5 @@
 ﻿  LearnOpenGL.cpp
-E:\Coding\OpenGLBasics\LearnOpenGL\Window.h(12,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\Window.h(15,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(163,15): warning C4244: "Initialisierung": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
-LINK : warning LNK4098: Standardbibliothek "MSVCRT" steht in Konflikt mit anderen Bibliotheken; /NODEFAULTLIB:Bibliothek verwenden.
-  LearnOpenGL.vcxproj -> E:\Coding\OpenGLBasics\LearnOpenGL\Debug\LearnOpenGL.exe
+D:\Coding\GameDev\OpenGL\opengllearn\Window.h(12,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\Window.h(15,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(163,15): warning C4244: "Initialisierung": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
+  LearnOpenGL.vcxproj -> D:\Coding\GameDev\OpenGL\opengllearn\Debug\LearnOpenGL.exe
