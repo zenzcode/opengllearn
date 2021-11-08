@@ -4,13 +4,17 @@ D:\Coding\GameDev\OpenGL\opengllearn\Window.h(15,10): warning C4244: "return": K
 D:\Coding\GameDev\OpenGL\opengllearn\Window.h(29,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
 D:\Coding\GameDev\OpenGL\opengllearn\Window.h(33,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
 D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(75,52): warning C4267: "Initialisierung": Konvertierung von "size_t" nach "unsigned int", Datenverlust möglich
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(146,63): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(146,66): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
 D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(146,38): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(154,67): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(154,39): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(155,72): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(155,42): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
 D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(167,64): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
 D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(167,39): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(214,88): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(214,63): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(264,15): warning C4244: "Initialisierung": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(215,88): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(215,63): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(221,99): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(221,74): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(280,15): warning C4244: "Initialisierung": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(295,65): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(295,40): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
   LearnOpenGL.vcxproj -> D:\Coding\GameDev\OpenGL\opengllearn\x64\Debug\LearnOpenGL.exe

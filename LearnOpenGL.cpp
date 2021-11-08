@@ -33,7 +33,7 @@ std::vector<Mesh*> meshList;
 std::vector<Shader*> shaderList;
 Camera* camera;
 
-GLuint colorBuffer;
+GLuint colorBuffer, depthTexture;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
@@ -143,25 +143,25 @@ void CreateShaders() {
 //gotta find a smarter way to do that... but later..
 void DrawMiniWindows() {
 	glEnable(GL_SCISSOR_TEST);
-	glScissor(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
+	glScissor(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight() / 8);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_SCISSOR_TEST);
 
 
-	shaderList[1]->UseShader();	
+	shaderList[1]->UseShader();
+	glUniform1i(glGetUniformLocation(shaderList[1]->GetShaderID(), "bufferTexture"), 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, colorBuffer);
-	glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight() / 10);
+	glViewport(0, 0, mainWindow->GetWidth() / 10, mainWindow->GetHeight() / 8);
 	glBindVertexArray(windowVAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, windowIBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, windowFBO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glActiveTexture(0);
 	glUseProgram(0);
+
 
 
 	glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
@@ -181,6 +181,7 @@ int main()
 	dirtTexture.LoadTextureA();
 
 	glGenTextures(1, &colorBuffer);
+	glGenTextures(1, &depthTexture);
 
 	humveeModel = ModelLoader();
 	humveeModel.LoadModel(humvee);
@@ -216,19 +217,29 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	glBindTexture(GL_TEXTURE_2D, depthTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, mainWindow->GetWidth(), mainWindow->GetHeight(), 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+
 
 
 	unsigned int indices[] = {
 	1, 0, 2,
-	1, 3, 2
+	1, 2, 3
 	};
 
 	GLfloat vertices[] = {
 		-1.f, -1.f, 0.f,	0.f, 0.f,	0.f, 0.f, 0.f, //bottom left
-		-1.f, 1.f, 0.f,		0.f, 0.f,	0.f, 0.f, 0.f, //top left
+		-1.f, 1.f, 0.f,		0.f, 1.f,	0.f, 0.f, 0.f, //top left
 		1.f, -1.f, 0.f,		1.f, 0.f,	0.f, 0.f, 0.f, //bottom right
 		1.f, 1.f, 0.f,		1.f, 1.f,	0.f, 0.f, 0.f //top right
 	};
+
+
+
 	glGenVertexArrays(1, &windowVAO);
 	glBindVertexArray(windowVAO);
 	glGenBuffers(1, &windowIBO);
@@ -239,22 +250,27 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, windowVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 8, 0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 8, (void*)(sizeof(vertices[0]) * 3));
+	glEnableVertexAttribArray(1);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	glGenFramebuffers(1, &windowFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, windowFBO);
-
-	std::cout << "ColorBuffer: " << colorBuffer << std::endl;
+	glEnable(GL_DEPTH_TEST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTexture, 0);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 		std::cout << "Framebuffer not complete. Status:" << glCheckFramebufferStatus(GL_FRAMEBUFFER) << "\n Error: " << (GLenum)glGetError() << std::endl;
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	std::array<GLuint, 4> clearColor{ 1, 0, 0, 1 };
+	std::array<GLuint, 4> clearColor{ 0, 0, 0, 0 };
 	glClearBufferuiv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, clearColor.data());
-	glBindVertexArray(0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
@@ -272,6 +288,11 @@ int main()
 
 		camera->keyControl(mainWindow->getKeys(), deltaTime);
 		camera->mouseControl(mainWindow->GetChangeX(), mainWindow->GetChangeY());
+
+		glBindFramebuffer(GL_FRAMEBUFFER, windowFBO);
+		glClearColor(0.f, 0.f, 0.f, 1.f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
 
 		shaderList[0]->UseShader();
 
@@ -331,7 +352,7 @@ int main()
 		glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
 		planeModel.RenderModel();
 		glUseProgram(0);
-
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		DrawMiniWindows();
 

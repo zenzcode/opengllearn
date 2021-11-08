@@ -27,6 +27,9 @@ public:
 	GLuint GetUniformEyePosition();
 	GLuint GetUniformSpecularIntensity();
 	GLuint GetUniformShininess();
+	inline GLuint GetShaderID() {
+		return shaderID;
+	}
 	void SetDirectionalLight(DirectionalLight* directionalLight);
 	void SetPointLight(PointLight* pLight, unsigned int lightCount);
 	void SetSpotLight(SpotLight* sLight, unsigned int lightCount);
