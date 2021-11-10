@@ -51,6 +51,7 @@ Material dullMaterial;
 ModelLoader humveeModel;
 ModelLoader planeModel;
 GLuint windowVAO, windowVBO, windowIBO, windowFBO;
+GLuint bigWindowVAO, bigWindowVBO, bigWindowIBO;
 
 void CalcAverageNormals(unsigned int* indices, unsigned int numOfIndices, GLfloat* vertices, unsigned int verticeCount, unsigned int vLength, unsigned int normalOffset) {
 	for (size_t i = 0; i < numOfIndices; i += 3) {
@@ -142,17 +143,27 @@ void CreateShaders() {
 
 //gotta find a smarter way to do that... but later..
 void DrawMiniWindows() {
+	shaderList[1]->UseShader();
+	glUniform1i(glGetUniformLocation(shaderList[1]->GetShaderID(), "bufferTexture"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, colorBuffer);
+	glBindVertexArray(bigWindowVAO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bigWindowIBO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 	glEnable(GL_SCISSOR_TEST);
 	glScissor(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight() / 8);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_SCISSOR_TEST);
 
 
-	shaderList[1]->UseShader();
+	glViewport(0, 0, mainWindow->GetWidth() / 10, mainWindow->GetHeight() / 8);
 	glUniform1i(glGetUniformLocation(shaderList[1]->GetShaderID(), "bufferTexture"), 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, colorBuffer);
-	glViewport(0, 0, mainWindow->GetWidth() / 10, mainWindow->GetHeight() / 8);
 	glBindVertexArray(windowVAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, windowIBO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -161,7 +172,6 @@ void DrawMiniWindows() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glActiveTexture(0);
 	glUseProgram(0);
-
 
 
 	glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
@@ -227,8 +237,8 @@ int main()
 
 
 	unsigned int indices[] = {
-	1, 0, 2,
-	1, 2, 3
+		1, 0, 2,
+		1, 2, 3
 	};
 
 	GLfloat vertices[] = {
@@ -237,6 +247,24 @@ int main()
 		1.f, -1.f, 0.f,		1.f, 0.f,	0.f, 0.f, 0.f, //bottom right
 		1.f, 1.f, 0.f,		1.f, 1.f,	0.f, 0.f, 0.f //top right
 	};
+
+	glGenVertexArrays(1, &bigWindowVAO);
+	glBindVertexArray(bigWindowVAO);
+	glGenBuffers(1, &bigWindowIBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bigWindowIBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &bigWindowVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, bigWindowVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 8, 0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 8, (void*)(sizeof(vertices[0]) * 3));
+	glEnableVertexAttribArray(1);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
 
@@ -260,7 +288,6 @@ int main()
 
 	glGenFramebuffers(1, &windowFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, windowFBO);
-	glEnable(GL_DEPTH_TEST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTexture, 0);
 
