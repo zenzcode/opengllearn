@@ -1,0 +1,14 @@
+#version 330
+
+out vec4 fragColor;
+
+in vec2 UV;
+
+uniform sampler2D bufferTexture;
+
+void main(){
+	float depth = texture(bufferTexture, UV).r * 2.0f - 1.0f;
+	float zFar = 100.0f;
+	float val = 1.0f / (zFar * (1.0 - depth));
+	fragColor = vec4(val, val, val, 1.0f);
+}

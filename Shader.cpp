@@ -130,6 +130,10 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode) {
 		uniformSpotLight[i].uniformEdge = glGetUniformLocation(shaderID, locBuf);
 	}
 
+	uniformTexture = glGetUniformLocation(shaderID, "textureIn");
+	uniformDirectionalLightTransform = glGetUniformLocation(shaderID, "directionalLightSpaceTransform");
+	uniformDirectionalShadowMap = glGetUniformLocation(shaderID, "directionalShadowMap");
+
 	std::cout << "Programm compiled and Linked successfully ID:" << shaderID << std::endl;
 }
 
@@ -194,6 +198,18 @@ void Shader::SetDirectionalLight(DirectionalLight* directionalLight) {
 	directionalLight->UseLight(uniformDirectionalLight.uniformAmbientIntensity, uniformDirectionalLight.uniformColor, uniformDirectionalLight.uniformDiffuseIntensity, uniformDirectionalLight.uniformDirection);
 }
 
+void Shader::SetTexture(GLuint textureUnit) {
+	glUniform1i(uniformTexture, textureUnit);
+}
+
+void Shader::SetDirectionalShadowMap(GLuint textureUnit) {
+	glUniform1i(uniformDirectionalShadowMap, textureUnit);
+}
+
+void Shader::SetDirectionalLightTransform(glm::mat4* lTransform) {
+	glUniformMatrix4fv(uniformDirectionalLightTransform, 1, GL_FALSE, glm::value_ptr(&lTransform));
+}
+
 GLuint Shader::GetModelLocation() {
 	return uniformModel;
 }
@@ -236,6 +252,18 @@ GLuint Shader::GetUniformSpecularIntensity() {
 
 GLuint Shader::GetUniformShininess() {
 	return uniformShininess;
+}
+
+GLuint Shader::GetUniformDirectionalLightTransform() {
+	return uniformDirectionalLightTransform;
+}
+
+GLuint Shader::GetUniformDirectionalShadowMap() {
+	return uniformDirectionalShadowMap;
+}
+
+GLuint Shader::GetUniformTexture() {
+	return uniformTexture;
 }
 
 Shader::~Shader() {

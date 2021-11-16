@@ -88,6 +88,12 @@ void Window::CreateCallBacks() {
 	glfwSetCursorPosCallback(mainWindow, handleMouse);
 }
 
+void Window::CheckMiniWindowToggle() {
+	if (keys[GLFW_KEY_F1]) {
+		isMiniWindows = !isMiniWindows;
+	}
+}
+
 void Window::handleKeys(GLFWwindow* window, int key, int code, int action, int mode) {
 	Window* w = static_cast<Window*>(glfwGetWindowUserPointer(window));
 
@@ -103,6 +109,8 @@ void Window::handleKeys(GLFWwindow* window, int key, int code, int action, int m
 			w->keys[key] = false;
 		}
 	}
+
+	w->CheckMiniWindowToggle();
 }
 
 void Window::handleMouse(GLFWwindow* window, double newX, double newY){

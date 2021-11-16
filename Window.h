@@ -38,8 +38,15 @@ public:
 		glfwSwapBuffers(mainWindow);
 	}
 
+	inline bool IsMiniWindows() {
+		return isMiniWindows;
+	}
+
+	void CheckMiniWindowToggle();
+
 	~Window();
 private:
+	bool isMiniWindows;
 	GLFWwindow* mainWindow;
 	GLint width, height;
 	GLint bufferWidth, bufferHeight;

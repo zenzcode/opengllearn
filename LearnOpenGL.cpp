@@ -25,6 +25,12 @@ static const char* frag = "Shaders/shader.frag";
 static const char* vertex2D = "Shaders/shader.vert2d";
 static const char* frag2D = "Shaders/Shader.frag2d";
 
+static const char* depthVertex2D = "Shaders/DepthShader.vert2d";
+static const char* depthFrag2D = "Shaders/DepthShader.frag2d";
+
+static const char* directionalShadowMapVert = "Shaders/DirectionalShadowMap.vert";
+static const char* directionalShadowMapFrag = "Shaders/DirectionalShadowMap.frag";
+
 static const char* humvee = "Models/Humvee/Humvee.obj";
 static const char* plane = "Models/plane/11803_Airplane_v1_l1.obj";
 
@@ -139,31 +145,41 @@ void CreateShaders() {
 	Shader* shader2D = new Shader;
 	shader2D->CreateFromFiles(vertex2D, frag2D);
 	shaderList.emplace_back(shader2D);
+	Shader* depthShader2D = new Shader;
+	depthShader2D->CreateFromFiles(depthVertex2D, depthFrag2D);
+	shaderList.emplace_back(depthShader2D);
+	Shader* directionalShadowMap = new Shader;
+	directionalShadowMap->CreateFromFiles(directionalShadowMapVert, directionalShadowMapFrag);
+	shaderList.emplace_back(directionalShadowMap);
 }
 
 //gotta find a smarter way to do that... but later..
 void DrawMiniWindows() {
-	shaderList[1]->UseShader();
-	glUniform1i(glGetUniformLocation(shaderList[1]->GetShaderID(), "bufferTexture"), 0);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, colorBuffer);
-	glBindVertexArray(bigWindowVAO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bigWindowIBO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindVertexArray(0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
+	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_SCISSOR_TEST);
 	glScissor(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight() / 8);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_SCISSOR_TEST);
 
-
-	glViewport(0, 0, mainWindow->GetWidth() / 10, mainWindow->GetHeight() / 8);
+	shaderList[1]->UseShader();
 	glUniform1i(glGetUniformLocation(shaderList[1]->GetShaderID(), "bufferTexture"), 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, colorBuffer);
+	glViewport(0, 0, mainWindow->GetWidth() / 10, mainWindow->GetHeight() / 8);
+	glBindVertexArray(windowVAO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, windowIBO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glActiveTexture(0);
+	glUseProgram(0);
+
+	shaderList[2]->UseShader();
+	glUniform1i(glGetUniformLocation(shaderList[2]->GetShaderID(), "bufferTexture"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, depthTexture);
+	glViewport(mainWindow->GetWidth() / 10, 0, mainWindow->GetWidth() / 10, mainWindow->GetHeight() / 8);
 	glBindVertexArray(windowVAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, windowIBO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -175,6 +191,23 @@ void DrawMiniWindows() {
 
 
 	glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
+	glEnable(GL_DEPTH_TEST);
+}
+
+void DrawMainQuad() {
+	glDisable(GL_DEPTH_TEST);
+	shaderList[1]->UseShader();
+	glUniform1i(glGetUniformLocation(shaderList[1]->GetShaderID(), "bufferTexture"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, colorBuffer);
+	glBindVertexArray(bigWindowVAO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bigWindowIBO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glUseProgram(0);
+	glEnable(GL_DEPTH_TEST);
 }
 
 int main()
@@ -300,7 +333,7 @@ int main()
 	glClearBufferuiv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, clearColor.data());
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
+	//hi, i love you <3
 
 	while (!mainWindow->GetShouldClose()) {
 
@@ -381,7 +414,11 @@ int main()
 		glUseProgram(0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		DrawMiniWindows();
+		DrawMainQuad();
+
+		if (mainWindow->IsMiniWindows()) {
+			DrawMiniWindows();
+		}
 
 		mainWindow->SwapBuffers();
 	}

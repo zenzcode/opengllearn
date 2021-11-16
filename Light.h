@@ -1,6 +1,7 @@
 #pragma once
 #include <glew.h>
 #include <glm.hpp>
+#include "ShadowMap.h"
 class Light
 {
 public:
@@ -12,5 +13,7 @@ protected:
 	glm::vec3 color;
 	GLfloat ambientIntensity;
 	GLfloat diffuseIntensity;
+	glm::mat4 lightProj;
+	ShadowMap* shadowMap;
 };
 
