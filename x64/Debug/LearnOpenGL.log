@@ -1,35 +1,50 @@
-﻿  LearnOpenGL.cpp
-D:\Coding\GameDev\OpenGL\opengllearn\Window.h(12,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.h(15,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.h(29,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.h(33,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(79,52): warning C4267: "Initialisierung": Konvertierung von "size_t" nach "unsigned int", Datenverlust möglich
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(157,66): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(157,38): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(165,72): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(165,42): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(179,98): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(179,68): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(179,36): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLint", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(190,64): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(190,39): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(255,88): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(255,63): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(261,99): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(261,74): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(337,15): warning C4244: "Initialisierung": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(352,65): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\LearnOpenGL.cpp(352,40): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-  Window.cpp
-D:\Coding\GameDev\OpenGL\opengllearn\Window.h(12,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.h(15,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.h(29,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.h(33,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.cpp(120,19): warning C4244: "=": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.cpp(121,19): warning C4244: "=": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.cpp(127,29): warning C4244: "=": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.cpp(128,20): warning C4244: "=": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.cpp(129,18): warning C4244: "=": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
-D:\Coding\GameDev\OpenGL\opengllearn\Window.cpp(130,18): warning C4244: "=": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
+﻿  Shader.cpp
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(80,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(80,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(83,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(83,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(86,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(86,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(89,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(89,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(92,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(92,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(95,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(95,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(98,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(98,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(105,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(105,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(108,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(108,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(111,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(111,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(114,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(114,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(117,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(117,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(120,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(120,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(123,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(123,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(126,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(126,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(129,36): warning C4477: "snprintf": Die Formatzeichenfolge "%d" erfordert ein Argument vom Typ "int", das variadic-Argument "1" weist aber den Typ "size_t" auf.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(129,36): message : Verwenden Sie ggf. "%zd" in der Formatzeichenfolge.
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(155,9): warning C4838: Konvertierung von "size_t" zu "GLint" erfordert eine einschränkende Konvertierung
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(156,2): warning C4267: "Initialisierung": Konvertierung von "size_t" nach "GLint", Datenverlust möglich
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(193,281): warning C4244: "Argument": Konvertierung von "GLuint" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(193,245): warning C4244: "Argument": Konvertierung von "GLuint" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(193,207): warning C4244: "Argument": Konvertierung von "GLuint" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(193,169): warning C4244: "Argument": Konvertierung von "GLuint" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(193,123): warning C4244: "Argument": Konvertierung von "GLuint" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(193,88): warning C4244: "Argument": Konvertierung von "GLuint" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(193,42): warning C4244: "Argument": Konvertierung von "GLuint" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(198,188): warning C4244: "Argument": Konvertierung von "GLuint" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(198,139): warning C4244: "Argument": Konvertierung von "GLuint" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(198,101): warning C4244: "Argument": Konvertierung von "GLuint" in "GLfloat", möglicher Datenverlust
+D:\Coding\GameDev\OpenGL\opengllearn\Shader.cpp(198,52): warning C4244: "Argument": Konvertierung von "GLuint" in "GLfloat", möglicher Datenverlust
+  SpotLight.cpp
   Code wird generiert...
+LINK : warning LNK4098: Standardbibliothek "MSVCRT" steht in Konflikt mit anderen Bibliotheken; /NODEFAULTLIB:Bibliothek verwenden.
   LearnOpenGL.vcxproj -> D:\Coding\GameDev\OpenGL\opengllearn\x64\Debug\LearnOpenGL.exe

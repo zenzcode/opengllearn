@@ -6,7 +6,7 @@ Light::Light() {
 	diffuseIntensity = 0;
 }
 
-Light::Light(GLfloat red, GLfloat green, GLfloat blue, GLfloat aIntensity,GLfloat diffuseIntensity) {
+Light::Light(GLfloat shadowWith, GLfloat shadowHeight, GLfloat red, GLfloat green, GLfloat blue, GLfloat aIntensity,GLfloat diffuseIntensity) {
 	color = glm::vec3(red, green, blue);
 	ambientIntensity = aIntensity;
 	this->diffuseIntensity = diffuseIntensity;

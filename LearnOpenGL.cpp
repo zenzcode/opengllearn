@@ -38,6 +38,7 @@ Window* mainWindow;
 std::vector<Mesh*> meshList;
 std::vector<Shader*> shaderList;
 Camera* camera;
+Shader directionalShadowShader;
 
 GLuint colorBuffer, depthTexture;
 
@@ -148,9 +149,8 @@ void CreateShaders() {
 	Shader* depthShader2D = new Shader;
 	depthShader2D->CreateFromFiles(depthVertex2D, depthFrag2D);
 	shaderList.emplace_back(depthShader2D);
-	Shader* directionalShadowMap = new Shader;
-	directionalShadowMap->CreateFromFiles(directionalShadowMapVert, directionalShadowMapFrag);
-	shaderList.emplace_back(directionalShadowMap);
+	directionalShadowShader = Shader();
+	directionalShadowShader.CreateFromFiles(directionalShadowMapVert, directionalShadowMapFrag);
 }
 
 //gotta find a smarter way to do that... but later..
@@ -210,6 +210,66 @@ void DrawMainQuad() {
 	glEnable(GL_DEPTH_TEST);
 }
 
+void Render() {
+	glm::mat4x4 model = glm::mat4x4(1.f);
+	model = glm::translate(model, glm::vec3(1.2f, 0.f, -3.f));
+	glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+	brickTexture.UseTexture();
+	shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
+	glUniform1f(shaderList[0]->GetTextureUnitLocation(), 0);
+	meshList[0]->RenderMesh();
+
+	model = glm::mat4(1.f);
+	model = glm::translate(model, glm::vec3(-1.2f, 0.f, -3.f));
+	glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+	glUniform1f(shaderList[0]->GetTextureUnitLocation(), 0);
+	brickTexture.UseTexture();
+	shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
+	meshList[1]->RenderMesh();
+
+	dullMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
+	model = glm::mat4(1.f);
+	model = glm::translate(model, glm::vec3(0.f, 0.f, -3.f));
+	glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+	dirtTexture.UseTexture();
+	meshList[2]->RenderMesh();
+
+	shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
+	model = glm::mat4(1.f);
+	model = glm::translate(model, glm::vec3(0.f, -2.f, 0.f));
+	glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+	dirtTexture.UseTexture();
+	meshList[3]->RenderMesh();
+	glUniform1f(shaderList[0]->GetTextureUnitLocation(), 0);
+
+
+	shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
+	model = glm::mat4(1.f);
+	model = glm::translate(model, glm::vec3(-2.f, 0.f, 0.f));
+	model = glm::scale(model, glm::vec3(0.005f, 0.005f, 0.005f));
+	glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+	humveeModel.RenderModel();
+
+	shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
+	model = glm::mat4(1.f);
+	model = glm::translate(model, glm::vec3(4.f, 0.f, 0.f));
+	model = glm::rotate(model, glm::radians(-90.f), glm::vec3(1, 1, 0));
+	model = glm::scale(model, glm::vec3(0.001f, 0.001f, 0.001f));
+	glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+	planeModel.RenderModel();
+	glUseProgram(0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	DrawMainQuad();
+
+	if (mainWindow->IsMiniWindows()) {
+		DrawMiniWindows();
+	}
+}
+
+void DirectionalShadowMapPass() {
+}
+
 int main()
 {
 	mainWindow = new Window(1336, 768);
@@ -232,7 +292,7 @@ int main()
 	planeModel = ModelLoader();
 	planeModel.LoadModel(plane);
 
-	mainLight = DirectionalLight(1.f, 1.f, 1.f, .1f, 2.f, 2.f, -2.f, 1.f);
+	mainLight = DirectionalLight(1024, 1024, 1.f, 1.f, 1.f, .1f, 2.f, 2.f, -2.f, 1.f);
 
 	unsigned int pointLightCount = 0;
 	
@@ -365,60 +425,6 @@ int main()
 		shaderList[0]->SetDirectionalLight(&mainLight);
 		shaderList[0]->SetPointLight(pointLights, pointLightCount);
 		shaderList[0]->SetSpotLight(spotLights, spotLightCount);
-		glm::mat4x4 model = glm::mat4x4(1.f);
-		model = glm::translate(model, glm::vec3(1.2f, 0.f, -3.f));
-		glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
-		brickTexture.UseTexture();
-		shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
-		glUniform1f(shaderList[0]->GetTextureUnitLocation(), 0);
-		meshList[0]->RenderMesh();
-
-		model = glm::mat4(1.f);
-		model = glm::translate(model, glm::vec3(-1.2f, 0.f, -3.f));
-		glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
-		glUniform1f(shaderList[0]->GetTextureUnitLocation(), 0);
-		brickTexture.UseTexture();
-		shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
-		meshList[1]->RenderMesh();
-
-		dullMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
-		model = glm::mat4(1.f);
-		model = glm::translate(model, glm::vec3(0.f, 0.f, -3.f));
-		glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
-		dirtTexture.UseTexture();
-		meshList[2]->RenderMesh();
-
-		shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
-		model = glm::mat4(1.f);
-		model = glm::translate(model, glm::vec3(0.f, -2.f, 0.f));
-		glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
-		dirtTexture.UseTexture();
-		meshList[3]->RenderMesh();
-		glUniform1f(shaderList[0]->GetTextureUnitLocation(), 0);
-
-
-		shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
-		model = glm::mat4(1.f);
-		model = glm::translate(model, glm::vec3(-2.f, 0.f, 0.f));
-		model = glm::scale(model, glm::vec3(0.005f, 0.005f, 0.005f));
-		glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
-		humveeModel.RenderModel();
-
-		shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
-		model = glm::mat4(1.f);
-		model = glm::translate(model, glm::vec3(4.f, 0.f, 0.f));
-		model = glm::rotate(model, glm::radians(-90.f), glm::vec3(1, 1, 0));
-		model = glm::scale(model, glm::vec3(0.001f, 0.001f, 0.001f));
-		glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
-		planeModel.RenderModel();
-		glUseProgram(0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		DrawMainQuad();
-
-		if (mainWindow->IsMiniWindows()) {
-			DrawMiniWindows();
-		}
 
 		mainWindow->SwapBuffers();
 	}

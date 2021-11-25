@@ -207,7 +207,7 @@ void Shader::SetDirectionalShadowMap(GLuint textureUnit) {
 }
 
 void Shader::SetDirectionalLightTransform(glm::mat4* lTransform) {
-	glUniformMatrix4fv(uniformDirectionalLightTransform, 1, GL_FALSE, glm::value_ptr(&lTransform));
+	glUniformMatrix4fv(uniformDirectionalLightTransform, 1, GL_FALSE, glm::value_ptr(*lTransform));
 }
 
 GLuint Shader::GetModelLocation() {
