@@ -11,6 +11,7 @@ public:
 	virtual void Write();	
 	virtual void Read(GLenum textureUnit);	
 	inline GLuint GetShadowWidth() { return shadowWidth; }
+    inline GLuint GetShadowHeight() { return shadowHeight; }
 	~ShadowMap();
 protected:
 	GLuint FBO;

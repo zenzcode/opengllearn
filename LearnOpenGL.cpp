@@ -60,6 +60,9 @@ ModelLoader planeModel;
 GLuint windowVAO, windowVBO, windowIBO, windowFBO;
 GLuint bigWindowVAO, bigWindowVBO, bigWindowIBO;
 
+unsigned int pointLightCount = 0;
+unsigned int spotLightCount = 0;
+
 void CalcAverageNormals(unsigned int* indices, unsigned int numOfIndices, GLfloat* vertices, unsigned int verticeCount, unsigned int vLength, unsigned int normalOffset) {
 	for (size_t i = 0; i < numOfIndices; i += 3) {
 		unsigned int in0 = indices[i] * vLength;
@@ -210,10 +213,11 @@ void DrawMainQuad() {
 	glEnable(GL_DEPTH_TEST);
 }
 
-void Render() {
+GLuint uniformModel = 0;
+void RenderScene() {
 	glm::mat4x4 model = glm::mat4x4(1.f);
 	model = glm::translate(model, glm::vec3(1.2f, 0.f, -3.f));
-	glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	brickTexture.UseTexture();
 	shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
 	glUniform1f(shaderList[0]->GetTextureUnitLocation(), 0);
@@ -221,7 +225,7 @@ void Render() {
 
 	model = glm::mat4(1.f);
 	model = glm::translate(model, glm::vec3(-1.2f, 0.f, -3.f));
-	glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	glUniform1f(shaderList[0]->GetTextureUnitLocation(), 0);
 	brickTexture.UseTexture();
 	shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
@@ -230,14 +234,14 @@ void Render() {
 	dullMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
 	model = glm::mat4(1.f);
 	model = glm::translate(model, glm::vec3(0.f, 0.f, -3.f));
-	glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	dirtTexture.UseTexture();
 	meshList[2]->RenderMesh();
 
 	shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
 	model = glm::mat4(1.f);
 	model = glm::translate(model, glm::vec3(0.f, -2.f, 0.f));
-	glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	dirtTexture.UseTexture();
 	meshList[3]->RenderMesh();
 	glUniform1f(shaderList[0]->GetTextureUnitLocation(), 0);
@@ -247,7 +251,7 @@ void Render() {
 	model = glm::mat4(1.f);
 	model = glm::translate(model, glm::vec3(-2.f, 0.f, 0.f));
 	model = glm::scale(model, glm::vec3(0.005f, 0.005f, 0.005f));
-	glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	humveeModel.RenderModel();
 
 	shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
@@ -255,7 +259,7 @@ void Render() {
 	model = glm::translate(model, glm::vec3(4.f, 0.f, 0.f));
 	model = glm::rotate(model, glm::radians(-90.f), glm::vec3(1, 1, 0));
 	model = glm::scale(model, glm::vec3(0.001f, 0.001f, 0.001f));
-	glUniformMatrix4fv(shaderList[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	planeModel.RenderModel();
 	glUseProgram(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -267,7 +271,51 @@ void Render() {
 	}
 }
 
-void DirectionalShadowMapPass() {
+void DirectionalShadowMapPass(DirectionalLight* dirLight) {
+	directionalShadowShader.UseShader();
+	glViewport(0, 0, dirLight->GetShadowMap()->GetShadowWidth(), dirLight->GetShadowMap()->GetShadowHeight());
+	dirLight->GetShadowMap()->Write();
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	uniformModel = directionalShadowShader.GetModelLocation();
+	glm::mat4 lightTransform = dirLight->CalculateLightTransform();
+	directionalShadowShader.SetDirectionalLightTransform(&lightTransform);
+
+	RenderScene();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glUseProgram(0);
+}
+
+void RenderPass(glm::mat4 view, glm::mat4 projection) {
+
+	shaderList[0]->UseShader();
+	glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
+	uniformModel = shaderList[0]->GetModelLocation();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, windowFBO);
+	glClearColor(0.f, 0.f, 0.f, 1.f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
+
+	glUniformMatrix4fv(shaderList[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projection));
+	glUniformMatrix4fv(shaderList[0]->GetViewLocation(), 1, GL_FALSE, glm::value_ptr(view));
+	glUniform3f(shaderList[0]->GetUniformEyePosition(), camera->GetCameraPosition().x, camera->GetCameraPosition().y, camera->GetCameraPosition().z);
+	shaderList[0]->SetDirectionalLight(&mainLight);
+	shaderList[0]->SetPointLight(pointLights, pointLightCount);
+	shaderList[0]->SetSpotLight(spotLights, spotLightCount);
+	glm::mat4 lightTransform = mainLight.CalculateLightTransform();
+	shaderList[0]->SetDirectionalLightTransform(&lightTransform);
+
+	mainLight.GetShadowMap()->Read(GL_TEXTURE1);
+	shaderList[0]->SetTexture(0);
+	shaderList[0]->SetDirectionalShadowMap(1);
+
+	glm::vec3 lowerLight = camera->GetCameraPosition();
+	lowerLight.y -= 0.3f;
+	spotLights[0].SetFlash(lowerLight, camera->GetCameraDirection());
+
+	RenderScene();
 }
 
 int main()
@@ -292,9 +340,7 @@ int main()
 	planeModel = ModelLoader();
 	planeModel.LoadModel(plane);
 
-	mainLight = DirectionalLight(1024, 1024, 1.f, 1.f, 1.f, .1f, 2.f, 2.f, -2.f, 1.f);
-
-	unsigned int pointLightCount = 0;
+	mainLight = DirectionalLight(2048, 2048, 1.f, 1.f, 1.f, .1f, 0.f, -7.f, -1.f, 1.f);
 	
 	pointLights[0] = PointLight(0.0f, 1.0f, 0.0f, 1.0f, -4.f, 0.f, 0.f, .5f, 0.3f, 0.2f, 0.1f);
 	pointLightCount++;
@@ -302,7 +348,6 @@ int main()
 	pointLights[1] = PointLight(0.0f, 0.0f, 1.0f, 1.0f, 4.f, 0.f, 0.f, .5f, 0.3f, 0.1f, 0.1f);
 	pointLightCount++;
 
-	unsigned int spotLightCount = 0;
 
 	spotLights[0] = SpotLight(1.f, 1.f, 1.f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.3f, 0.2f, 0.1f, 30.0f);
 
@@ -409,22 +454,10 @@ int main()
 		camera->keyControl(mainWindow->getKeys(), deltaTime);
 		camera->mouseControl(mainWindow->GetChangeX(), mainWindow->GetChangeY());
 
-		glBindFramebuffer(GL_FRAMEBUFFER, windowFBO);
-		glClearColor(0.f, 0.f, 0.f, 1.f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
+		DirectionalShadowMapPass(&mainLight);
+		RenderPass(camera->calculateViewMatrix(), projection);
 
-		shaderList[0]->UseShader();
-
-		glUniformMatrix4fv(shaderList[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(shaderList[0]->GetViewLocation(), 1, GL_FALSE, glm::value_ptr(camera->calculateViewMatrix()));
-		glUniform3f(shaderList[0]->GetUniformEyePosition(), camera->GetCameraPosition().x, camera->GetCameraPosition().y, camera->GetCameraPosition().z);
-		glm::vec3 lowerLight = camera->GetCameraPosition();
-		lowerLight.y -= 0.3f;
-		spotLights[0].SetFlash(lowerLight, camera->GetCameraDirection());
-		shaderList[0]->SetDirectionalLight(&mainLight);
-		shaderList[0]->SetPointLight(pointLights, pointLightCount);
-		shaderList[0]->SetSpotLight(spotLights, spotLightCount);
+		glUseProgram(0);
 
 		mainWindow->SwapBuffers();
 	}

@@ -17,6 +17,8 @@ bool ShadowMap::Init(GLuint width, GLuint height) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	float bColor[] = { 1.f, 1.f, 1.f, 1.f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, bColor);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMapID, 0);
@@ -39,9 +41,6 @@ bool ShadowMap::Init(GLuint width, GLuint height) {
 
 void ShadowMap::Write() {
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-	//todo: process models from lights position
-	//including its view and projection matrix
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void ShadowMap::Read(GLenum textureUnit) {
