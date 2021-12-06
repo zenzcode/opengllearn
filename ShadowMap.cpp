@@ -4,7 +4,7 @@ ShadowMap::ShadowMap() {
 	shadowMapID = 0;
 }
 
-bool ShadowMap::Init(GLuint width, GLuint height) {
+bool ShadowMap::Init(GLfloat width, GLfloat height) {
 	this->shadowWidth = width;
 	this->shadowHeight = height;
 

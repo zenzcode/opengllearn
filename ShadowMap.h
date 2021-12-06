@@ -7,7 +7,7 @@ class ShadowMap
 {
 public:
 	ShadowMap();
-	virtual bool Init(GLuint width, GLuint height);
+	virtual bool Init(GLfloat width, GLfloat height);
 	virtual void Write();	
 	virtual void Read(GLenum textureUnit);	
 	inline GLuint GetShadowWidth() { return shadowWidth; }

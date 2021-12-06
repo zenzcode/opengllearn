@@ -40,6 +40,11 @@ struct SpotLight{
 	float edge;
 };
 
+struct OmniShadowMap{
+	samplerCube shadowMap;
+	float farPlane;
+};
+
 struct Material{
 	float specularIntensity;
 	float shininess;
@@ -51,6 +56,7 @@ uniform int spotLightCount;
 uniform DirectionalLight directionalLight;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
+uniform OmniShadowMap omniShadowMaps[MAX_POINT_LIGHTS + MAX_SPOT_LIGHTS];
 uniform Material material;
 
 uniform vec3 eyePosition;
@@ -80,6 +86,11 @@ float CalcDirectionalShadowFactor(DirectionalLight directionalLight){
 		shadow = 0.0f;
 	}
 	return shadow;
+}
+
+float CalcOmniShadowFactor(PointLight pLight, int shadowIndex){
+	vec3 fragToLight = FragPos - pLight.position;
+	float closest = texture(omniShadowMaps[shadowIndex].shadowMap, fragToLight.xyz).r;
 }
 
 vec4 CalcLightByDirection(Light light, vec3 direction, float shadowMultiplier){

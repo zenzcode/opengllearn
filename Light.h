@@ -2,6 +2,7 @@
 #include <glew.h>
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
+#include <vector>
 #include "ShadowMap.h"
 class Light
 {

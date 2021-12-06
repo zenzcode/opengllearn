@@ -5,9 +5,9 @@ SpotLight::SpotLight() : PointLight(){
 	edge = 0.0f;
 }
 
-SpotLight::SpotLight(GLfloat red, GLfloat green, GLfloat blue, GLfloat aIntensity, GLfloat posX, GLfloat posY,
+SpotLight::SpotLight(GLfloat shadowWidth, GLfloat shadowHeight, GLfloat near, GLfloat far, GLfloat red, GLfloat green, GLfloat blue, GLfloat aIntensity, GLfloat posX, GLfloat posY,
 	GLfloat posZ, GLfloat dirX, GLfloat dirY, GLfloat dirZ, GLfloat diffuseIntensity,
-	GLfloat con, GLfloat lin, GLfloat exp, GLfloat edge) : PointLight(red, green, blue, aIntensity, posX, posY, posZ, diffuseIntensity, con, lin, exp)
+	GLfloat con, GLfloat lin, GLfloat exp, GLfloat edge) : PointLight(shadowWidth, shadowHeight, near, far, red, green, blue, aIntensity, posX, posY, posZ, diffuseIntensity, con, lin, exp)
 {
 	this->direction = glm::normalize(glm::vec3(dirX, dirY, dirZ));
 	this->edge = edge;

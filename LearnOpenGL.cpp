@@ -31,6 +31,11 @@ static const char* depthFrag2D = "Shaders/DepthShader.frag2d";
 static const char* directionalShadowMapVert = "Shaders/DirectionalShadowMap.vert";
 static const char* directionalShadowMapFrag = "Shaders/DirectionalShadowMap.frag";
 
+
+static const char* omniShadowMapVert = "Shaders/OmniShadowMap.vert";
+static const char* omniShadowMapGeom = "Shaders/OmniShadowMap.frag";
+static const char* omniShadowMapFrag = "Shaders/OmniShadowMap.vert";
+
 static const char* humvee = "Models/Humvee/Humvee.obj";
 static const char* plane = "Models/plane/11803_Airplane_v1_l1.obj";
 
@@ -39,6 +44,7 @@ std::vector<Mesh*> meshList;
 std::vector<Shader*> shaderList;
 Camera* camera;
 Shader directionalShadowShader;
+Shader omniShadowShader;
 
 GLuint colorBuffer, depthTexture;
 
@@ -154,6 +160,9 @@ void CreateShaders() {
 	shaderList.emplace_back(depthShader2D);
 	directionalShadowShader = Shader();
 	directionalShadowShader.CreateFromFiles(directionalShadowMapVert, directionalShadowMapFrag);
+
+	omniShadowShader = Shader();
+	omniShadowShader.CreateFromFiles(omniShadowMapVert, omniShadowMapGeom, omniShadowMapFrag);
 }
 
 //gotta find a smarter way to do that... but later..
@@ -271,6 +280,26 @@ void RenderScene() {
 	}
 }
 
+void OmniShadowMapPass(PointLight* pointLight) {
+	omniShadowShader.UseShader();
+	glViewport(0, 0, pointLight->GetShadowMap()->GetShadowWidth(), pointLight->GetShadowMap()->GetShadowHeight());
+
+	pointLight->GetShadowMap()->Write();
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	uniformModel = omniShadowShader.GetModelLocation();
+
+	glUniform3f(omniShadowShader.GetOmniLightPos(), pointLight->GetPosition().x, pointLight->GetPosition().y, pointLight->GetPosition().z);
+	glUniform1f(omniShadowShader.GetFarPlanePos(), pointLight->GetFarPlane());
+	omniShadowShader.SetOmniLightMatrices(pointLight->CalculateLightTransform());
+
+	RenderScene();
+
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glUseProgram(0);
+}
+
 void DirectionalShadowMapPass(DirectionalLight* dirLight) {
 	directionalShadowShader.UseShader();
 	glViewport(0, 0, dirLight->GetShadowMap()->GetShadowWidth(), dirLight->GetShadowMap()->GetShadowHeight());
@@ -342,21 +371,21 @@ int main()
 
 	mainLight = DirectionalLight(2048, 2048, 1.f, 1.f, 1.f, .1f, 0.f, -7.f, -1.f, 1.f);
 	
-	pointLights[0] = PointLight(0.0f, 1.0f, 0.0f, 1.0f, -4.f, 0.f, 0.f, .5f, 0.3f, 0.2f, 0.1f);
+	pointLights[0] = PointLight(1024, 1024, 0.01f, 100.f, 0.0f, 1.0f, 0.0f, 1.0f, -4.f, 0.f, 0.f, .5f, 0.3f, 0.2f, 0.1f);
 	pointLightCount++;
 		
-	pointLights[1] = PointLight(0.0f, 0.0f, 1.0f, 1.0f, 4.f, 0.f, 0.f, .5f, 0.3f, 0.1f, 0.1f);
+	pointLights[1] = PointLight(1024, 1024, 0.01f, 100.f, 0.0f, 0.0f, 1.0f, 1.0f, 4.f, 0.f, 0.f, .5f, 0.3f, 0.1f, 0.1f);
 	pointLightCount++;
 
 
-	spotLights[0] = SpotLight(1.f, 1.f, 1.f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.3f, 0.2f, 0.1f, 30.0f);
+	spotLights[0] = SpotLight(1024, 1024, 0.01f, 100.f, 1.f, 1.f, 1.f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.3f, 0.2f, 0.1f, 30.0f);
 
 	spotLightCount++;
 
 
 	shinyMaterial = Material(1.f, 265.f);
 	dullMaterial = Material(.3f, 4.f);
-	glm::mat4x4 projection = glm::perspective(45.f, mainWindow->GetBufferWidth() / mainWindow->GetBufferHeight(), 0.1f, 100.f);
+	glm::mat4x4 projection = glm::perspective(glm::radians(45.f), mainWindow->GetBufferWidth() / mainWindow->GetBufferHeight(), 0.1f, 100.f);
 
 	glEnable(GL_CULL_FACE);
 	glBindTexture(GL_TEXTURE_2D, colorBuffer);
@@ -455,6 +484,12 @@ int main()
 		camera->mouseControl(mainWindow->GetChangeX(), mainWindow->GetChangeY());
 
 		DirectionalShadowMapPass(&mainLight);
+		for (size_t i = 0; i < pointLightCount; ++i) {
+			OmniShadowMapPass(&pointLights[i]);
+		}
+		for (size_t i = 0; i < spotLightCount; ++i) {
+			OmniShadowMapPass(&spotLights[i]);
+		}
 		RenderPass(camera->calculateViewMatrix(), projection);
 
 		glUseProgram(0);
