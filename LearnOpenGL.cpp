@@ -160,8 +160,6 @@ void CreateShaders() {
 	shaderList.emplace_back(depthShader2D);
 	directionalShadowShader = Shader();
 	directionalShadowShader.CreateFromFiles(directionalShadowMapVert, directionalShadowMapFrag);
-
-	omniShadowShader = Shader();
 	omniShadowShader.CreateFromFiles(omniShadowMapVert, omniShadowMapGeom, omniShadowMapFrag);
 }
 
@@ -174,8 +172,8 @@ void DrawMiniWindows() {
 	glDisable(GL_SCISSOR_TEST);
 
 	shaderList[1]->UseShader();
-	glUniform1i(glGetUniformLocation(shaderList[1]->GetShaderID(), "bufferTexture"), 0);
-	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(shaderList[1]->GetShaderID(), "bufferTexture"), 1);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, colorBuffer);
 	glViewport(0, 0, mainWindow->GetWidth() / 10, mainWindow->GetHeight() / 8);
 	glBindVertexArray(windowVAO);
@@ -188,8 +186,8 @@ void DrawMiniWindows() {
 	glUseProgram(0);
 
 	shaderList[2]->UseShader();
-	glUniform1i(glGetUniformLocation(shaderList[2]->GetShaderID(), "bufferTexture"), 0);
-	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(shaderList[2]->GetShaderID(), "bufferTexture"), 1);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, depthTexture);
 	glViewport(mainWindow->GetWidth() / 10, 0, mainWindow->GetWidth() / 10, mainWindow->GetHeight() / 8);
 	glBindVertexArray(windowVAO);
@@ -209,8 +207,8 @@ void DrawMiniWindows() {
 void DrawMainQuad() {
 	glDisable(GL_DEPTH_TEST);
 	shaderList[1]->UseShader();
-	glUniform1i(glGetUniformLocation(shaderList[1]->GetShaderID(), "bufferTexture"), 0);
-	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(shaderList[1]->GetShaderID(), "bufferTexture"), 1);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, colorBuffer);
 	glBindVertexArray(bigWindowVAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bigWindowIBO);
@@ -229,13 +227,13 @@ void RenderScene() {
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	brickTexture.UseTexture();
 	shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
-	glUniform1f(shaderList[0]->GetTextureUnitLocation(), 0);
+	glUniform1f(shaderList[0]->GetTextureUnitLocation(), 1);
 	meshList[0]->RenderMesh();
 
 	model = glm::mat4(1.f);
 	model = glm::translate(model, glm::vec3(-1.2f, 0.f, -3.f));
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-	glUniform1f(shaderList[0]->GetTextureUnitLocation(), 0);
+	glUniform1f(shaderList[0]->GetTextureUnitLocation(), 1);
 	brickTexture.UseTexture();
 	shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
 	meshList[1]->RenderMesh();
@@ -253,7 +251,7 @@ void RenderScene() {
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	dirtTexture.UseTexture();
 	meshList[3]->RenderMesh();
-	glUniform1f(shaderList[0]->GetTextureUnitLocation(), 0);
+	glUniform1f(shaderList[0]->GetTextureUnitLocation(), 1);
 
 
 	shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
@@ -266,7 +264,7 @@ void RenderScene() {
 	shinyMaterial.UseMaterial(shaderList[0]->GetUniformSpecularIntensity(), shaderList[0]->GetUniformShininess());
 	model = glm::mat4(1.f);
 	model = glm::translate(model, glm::vec3(4.f, 0.f, 0.f));
-	model = glm::rotate(model, glm::radians(-90.f), glm::vec3(1, 1, 0));
+	model = glm::rotate(model, glm::radians(-90.f), glm::vec3(1, 0, 0));
 	model = glm::scale(model, glm::vec3(0.001f, 0.001f, 0.001f));
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 	planeModel.RenderModel();
@@ -295,8 +293,6 @@ void OmniShadowMapPass(PointLight* pointLight) {
 
 	omniShadowShader.Validate();
 	RenderScene();
-
-
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glUseProgram(0);
 }
@@ -312,7 +308,6 @@ void DirectionalShadowMapPass(DirectionalLight* dirLight) {
 	directionalShadowShader.SetDirectionalLightTransform(&lightTransform);
 
 	directionalShadowShader.Validate();
-
 	RenderScene();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -392,12 +387,14 @@ int main()
 	glm::mat4x4 projection = glm::perspective(glm::radians(45.f), mainWindow->GetBufferWidth() / mainWindow->GetBufferHeight(), 0.1f, 100.f);
 
 	glEnable(GL_CULL_FACE);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, colorBuffer);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, mainWindow->GetWidth(), mainWindow->GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, depthTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, mainWindow->GetWidth(), mainWindow->GetHeight(), 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -488,10 +485,10 @@ int main()
 		camera->mouseControl(mainWindow->GetChangeX(), mainWindow->GetChangeY());
 
 		DirectionalShadowMapPass(&mainLight);
-		for (size_t i = 0; i < pointLightCount; ++i) {
+		for (size_t i = 0; i < pointLightCount; i++) {
 			OmniShadowMapPass(&pointLights[i]);
 		}
-		for (size_t i = 0; i < spotLightCount; ++i) {
+		for (size_t i = 0; i < spotLightCount; i++) {
 			OmniShadowMapPass(&spotLights[i]);
 		}
 		RenderPass(camera->calculateViewMatrix(), projection);

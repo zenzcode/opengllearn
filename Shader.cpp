@@ -171,7 +171,7 @@ void Shader::CompileProgram() {
 		uniformLightMatrices[i] = glGetUniformLocation(shaderID, locBuf);
 	}
 
-	for (size_t i = 0; i < MAX_SPOT_LIGHTS + MAX_POINT_LIGHTS; ++i) {
+	for (size_t i = 0; i < MAX_POINT_LIGHTS + MAX_SPOT_LIGHTS; i++) {
 		char locBuf[100] = { '\0' };
 
 		snprintf(locBuf, sizeof(locBuf), "omniShadowMaps[%d].shadowMap", i);
@@ -188,7 +188,7 @@ void Shader::CompileProgram() {
 void Shader::SetSpotLight(SpotLight* sLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset) {
 	if (lightCount > MAX_SPOT_LIGHTS) lightCount = MAX_SPOT_LIGHTS;
 	glUniform1i(uniformSpotLightCount, lightCount);
-	for (size_t i = 0; i < lightCount; ++i) {
+	for (size_t i = 0; i < lightCount; i++) {
 		sLight[i].UseLight(uniformSpotLight[i].uniformAmbientIntensity, uniformSpotLight[i].uniformColor, uniformSpotLight[i].uniformDiffuseIntensity,
 			uniformSpotLight[i].uniformPosition, uniformSpotLight[i].uniformConstant, uniformSpotLight[i].uniformLinear, uniformSpotLight[i].uniformExponent,
 			uniformSpotLight[i].uniformDirection, uniformSpotLight[i].uniformEdge);
@@ -239,7 +239,7 @@ void Shader::ClearShader() {
 void Shader::SetPointLight(PointLight* pLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset) {
 	if (lightCount > MAX_POINT_LIGHTS) lightCount = MAX_POINT_LIGHTS;
 	glUniform1i(uniformPointLightCount, lightCount);
-	for (size_t i = 0; i < lightCount; ++i) {
+	for (size_t i = 0; i < lightCount; i++) {
 		pLight[i].UseLight(uniformPointLight[i].uniformAmbientIntensity, uniformPointLight[i].uniformColor, uniformPointLight[i].uniformDiffuseIntensity, uniformPointLight[i].uniformPosition, uniformPointLight[i].uniformConstant, uniformPointLight[i].uniformLinear, uniformPointLight[i].uniformExponent);
 		pLight[i].GetShadowMap()->Read(GL_TEXTURE0 + textureUnit + i);
 		glUniform1i(uniformOmniShadowMaps[i + offset].shadowMap, textureUnit + i);
@@ -264,7 +264,7 @@ void Shader::SetDirectionalLightTransform(glm::mat4* transform) {
 }
 
 void Shader::SetOmniLightMatrices(std::vector<glm::mat4> lightMatrices) {
-	for (size_t i = 0; i < lightMatrices.size(); ++i) {
+	for (size_t i = 0; i < 6; ++i) {
 		glUniformMatrix4fv(uniformLightMatrices[i], 1, GL_FALSE, glm::value_ptr(lightMatrices[i]));
 	}
 }
@@ -299,9 +299,6 @@ GLuint Shader::GetOmniLightPos() {
 }
 GLuint Shader::GetFarPlanePos() {
 	return uniformFarPlane;
-}
-GLuint* Shader::GetUniformLightMatrices() {
-	return uniformLightMatrices;
 }
 
 

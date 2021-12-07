@@ -37,7 +37,6 @@ public:
 	GLuint GetUniformTexture();
 	GLuint GetOmniLightPos();
 	GLuint GetFarPlanePos();
-	GLuint* GetUniformLightMatrices();
 	inline GLuint GetShaderID() {
 		return shaderID;
 	}
@@ -54,21 +53,20 @@ public:
 private:
 	int pointLightCount;
 	int spotLightCount;
-	GLuint shaderID;
-	GLuint uniformProjection;
-	GLuint uniformModel;
-	GLuint uniformView;
-	GLuint uniformTextureUnit;
-	GLuint uniformEyePos;
-	GLuint uniformSpecularIntensity;
-	GLuint uniformShininess;
-	GLuint uniformDirectionalLightTransform;
-	GLuint uniformDirectionalShadowMap;
-	GLuint uniformTexture;
-	GLuint uniformOmniLightPos;
-	GLuint uniformFarPlane;
-
-	GLuint uniformLightMatrices[6];
+	GLuint shaderID = 0;
+	GLuint uniformProjection = 0;
+	GLuint uniformModel = 0;
+	GLuint uniformView = 0;
+	GLuint uniformTextureUnit = 0;
+	GLuint uniformEyePos = 0;
+	GLuint uniformSpecularIntensity = 0;
+	GLuint uniformShininess = 0;
+	GLuint uniformDirectionalLightTransform = 0;
+	GLuint uniformDirectionalShadowMap = 0;
+	GLuint uniformTexture = 0;
+	GLuint uniformOmniLightPos = 0;
+	GLuint uniformFarPlane = 0;
+	GLuint uniformLightMatrices[6] = { 0 };
 
 	struct {
 		GLuint uniformColor;
@@ -104,8 +102,8 @@ private:
 		GLuint farPlane;
 	} uniformOmniShadowMaps[MAX_POINT_LIGHTS + MAX_SPOT_LIGHTS];
 
-	GLuint uniformPointLightCount;
-	GLuint uniformSpotLightCount;
+	GLuint uniformPointLightCount = 0;
+	GLuint uniformSpotLightCount = 0;
 
 
 	void CompileShader(const char* vertexCode, const char* fragmentCode);
