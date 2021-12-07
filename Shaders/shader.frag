@@ -90,7 +90,12 @@ float CalcDirectionalShadowFactor(DirectionalLight directionalLight){
 
 float CalcOmniShadowFactor(PointLight pLight, int shadowIndex){
 	vec3 fragToLight = FragPos - pLight.position;
-	float closest = texture(omniShadowMaps[shadowIndex].shadowMap, fragToLight.xyz).r;
+	float closest = texture(omniShadowMaps[shadowIndex].shadowMap, fragToLight).r;
+	closest *= omniShadowMaps[shadowIndex].farPlane;
+	float current = length(fragToLight);
+	float bias = 0.05f;
+	float shadow = current - bias > closest ? 1.0 : 0.0;
+	return shadow;
 }
 
 vec4 CalcLightByDirection(Light light, vec3 direction, float shadowMultiplier){
@@ -117,23 +122,25 @@ vec4 CalcDirectionalLight(){
 	return CalcLightByDirection(directionalLight.base, directionalLight.direction, directionalShadow);
 }
 
-vec4 CalcPointLight(PointLight pLight){
+vec4 CalcPointLight(PointLight pLight, int shadowIndex){
 		vec3 direction = pLight.position - FragPos;
 		float distance = length(direction);
 		direction = normalize(direction);
 		
-		vec4 color = CalcLightByDirection(pLight.base, direction, 0.0f);
+		float shadowFactor = CalcOmniShadowFactor(pLight, shadowIndex);
+		
+		vec4 color = CalcLightByDirection(pLight.base, direction, shadowFactor);
 		float attenuation = pLight.exponent * distance * distance + pLight.linear * distance + pLight.constant;
 		return color / attenuation;
 }
 
-vec4 CalcSpotLight(SpotLight sLight){
+vec4 CalcSpotLight(SpotLight sLight, int shadowIndex){
 	vec3 rayDirection = normalize(FragPos - sLight.base.position);
 	float spotLightFactor = dot(rayDirection, sLight.direction);
 	
 	vec4 color = vec4(0, 0, 0, 0);
 	if(spotLightFactor > sLight.edge){
-		color = CalcPointLight(sLight.base);
+		color = CalcPointLight(sLight.base, shadowIndex);
 	}
 	return color * (1.0f - (1.0f - spotLightFactor) * (1.0f/(1.0f-sLight.edge)));
 }
@@ -141,7 +148,7 @@ vec4 CalcSpotLight(SpotLight sLight){
 vec4 CalcSpotLights(){
 	vec4 totalColor = vec4(0, 0, 0, 0);
 	for(int i = 0; i < spotLightCount; i++){
-		totalColor += CalcSpotLight(spotLights[i]);
+		totalColor += CalcSpotLight(spotLights[i], i + pointLightCount);
 	}
 	return totalColor;
 }
@@ -149,7 +156,7 @@ vec4 CalcSpotLights(){
 vec4 CalcPointLights(){
 	vec4 totalColor = vec4(0, 0, 0, 0);
 	for(int i = 0; i < pointLightCount; i++){
-		totalColor += CalcPointLight(pointLights[i]);
+		totalColor += CalcPointLight(pointLights[i], i);
 	}
 	return totalColor;
 }

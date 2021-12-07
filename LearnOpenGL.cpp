@@ -33,8 +33,8 @@ static const char* directionalShadowMapFrag = "Shaders/DirectionalShadowMap.frag
 
 
 static const char* omniShadowMapVert = "Shaders/OmniShadowMap.vert";
-static const char* omniShadowMapGeom = "Shaders/OmniShadowMap.frag";
-static const char* omniShadowMapFrag = "Shaders/OmniShadowMap.vert";
+static const char* omniShadowMapGeom = "Shaders/OmniShadowMap.geom";
+static const char* omniShadowMapFrag = "Shaders/OmniShadowMap.frag";
 
 static const char* humvee = "Models/Humvee/Humvee.obj";
 static const char* plane = "Models/plane/11803_Airplane_v1_l1.obj";
@@ -293,6 +293,7 @@ void OmniShadowMapPass(PointLight* pointLight) {
 	glUniform1f(omniShadowShader.GetFarPlanePos(), pointLight->GetFarPlane());
 	omniShadowShader.SetOmniLightMatrices(pointLight->CalculateLightTransform());
 
+	omniShadowShader.Validate();
 	RenderScene();
 
 
@@ -309,6 +310,8 @@ void DirectionalShadowMapPass(DirectionalLight* dirLight) {
 	uniformModel = directionalShadowShader.GetModelLocation();
 	glm::mat4 lightTransform = dirLight->CalculateLightTransform();
 	directionalShadowShader.SetDirectionalLightTransform(&lightTransform);
+
+	directionalShadowShader.Validate();
 
 	RenderScene();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -331,19 +334,20 @@ void RenderPass(glm::mat4 view, glm::mat4 projection) {
 	glUniformMatrix4fv(shaderList[0]->GetViewLocation(), 1, GL_FALSE, glm::value_ptr(view));
 	glUniform3f(shaderList[0]->GetUniformEyePosition(), camera->GetCameraPosition().x, camera->GetCameraPosition().y, camera->GetCameraPosition().z);
 	shaderList[0]->SetDirectionalLight(&mainLight);
-	shaderList[0]->SetPointLight(pointLights, pointLightCount);
-	shaderList[0]->SetSpotLight(spotLights, spotLightCount);
+	shaderList[0]->SetPointLight(pointLights, pointLightCount, 3, 0);
+	shaderList[0]->SetSpotLight(spotLights, spotLightCount, 3 + pointLightCount, pointLightCount);
 	glm::mat4 lightTransform = mainLight.CalculateLightTransform();
 	shaderList[0]->SetDirectionalLightTransform(&lightTransform);
 
-	mainLight.GetShadowMap()->Read(GL_TEXTURE1);
-	shaderList[0]->SetTexture(0);
-	shaderList[0]->SetDirectionalShadowMap(1);
+	mainLight.GetShadowMap()->Read(GL_TEXTURE2);
+	shaderList[0]->SetTexture(1);
+	shaderList[0]->SetDirectionalShadowMap(2);
 
 	glm::vec3 lowerLight = camera->GetCameraPosition();
 	lowerLight.y -= 0.3f;
 	spotLights[0].SetFlash(lowerLight, camera->GetCameraDirection());
 
+	shaderList[0]->Validate();
 	RenderScene();
 }
 
@@ -369,9 +373,9 @@ int main()
 	planeModel = ModelLoader();
 	planeModel.LoadModel(plane);
 
-	mainLight = DirectionalLight(2048, 2048, 1.f, 1.f, 1.f, .1f, 0.f, -7.f, -1.f, 1.f);
+	mainLight = DirectionalLight(2048, 2048, 1.f, 1.f, 1.f, 0.f, 0.f, -7.f, -1.f, 0.f);
 	
-	pointLights[0] = PointLight(1024, 1024, 0.01f, 100.f, 0.0f, 1.0f, 0.0f, 1.0f, -4.f, 0.f, 0.f, .5f, 0.3f, 0.2f, 0.1f);
+	pointLights[0] = PointLight(1024, 1024, 0.01f, 100.f, 0.0f, 1.0f, 0.0f, 1.0f, 0.f, 0.f, 0.f, .1f, 0.3f, 0.2f, 0.1f);
 	pointLightCount++;
 		
 	pointLights[1] = PointLight(1024, 1024, 0.01f, 100.f, 0.0f, 0.0f, 1.0f, 1.0f, 4.f, 0.f, 0.f, .5f, 0.3f, 0.1f, 0.1f);

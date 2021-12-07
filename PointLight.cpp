@@ -18,6 +18,8 @@ PointLight::PointLight(GLfloat shadowWidth, GLfloat shadowHeight, GLfloat near, 
 	float aspect = shadowWidth / shadowHeight;
 	lightProj = glm::perspective(glm::radians(90.f), aspect, near, far);
 
+	shadowMap = new OmniShadowMap();
+	shadowMap->Init(shadowWidth, shadowHeight);
 }
 
 void PointLight::UseLight(GLfloat ambientIntensityLocation, GLfloat ambientColorLocation, GLfloat diffuseIntensityLocation, GLfloat positionLocation, GLfloat constantLocation, GLfloat linearLocation, GLfloat exponentialLocation) {
@@ -34,14 +36,14 @@ void PointLight::UseLight(GLfloat ambientIntensityLocation, GLfloat ambientColor
 std::vector<glm::mat4> PointLight::CalculateLightTransform() {
 	std::vector<glm::mat4> lightTransform;
 	//+x-x
-	lightTransform.push_back(glm::lookAt(position, position + glm::vec3(1.0f, 0.f, 0.f), glm::vec3(0.f, -1.f, 0.f)));
-	lightTransform.push_back(glm::lookAt(position, position + glm::vec3(-1.0f, 0.f, 0.f), glm::vec3(0.f, -1.f, 0.f)));
+	lightTransform.push_back(lightProj * glm::lookAt(position, position + glm::vec3(1.0f, 0.f, 0.f), glm::vec3(0.f, -1.f, 0.f)));
+	lightTransform.push_back(lightProj * glm::lookAt(position, position + glm::vec3(-1.0f, 0.f, 0.f), glm::vec3(0.f, -1.f, 0.f)));
 	//+y-y
-	lightTransform.push_back(glm::lookAt(position, position + glm::vec3(0.0f, 1.f, 0.f), glm::vec3(0.f, 0.f, 1.f)));
-	lightTransform.push_back(glm::lookAt(position, position + glm::vec3(0.0f, -1.f, 0.f), glm::vec3(0.f, 0.f, -1.f)));
+	lightTransform.push_back(lightProj * glm::lookAt(position, position + glm::vec3(0.0f, 1.f, 0.f), glm::vec3(0.f, 0.f, 1.f)));
+	lightTransform.push_back(lightProj * glm::lookAt(position, position + glm::vec3(0.0f, -1.f, 0.f), glm::vec3(0.f, 0.f, -1.f)));
 	//+z-z
-	lightTransform.push_back(glm::lookAt(position, position + glm::vec3(0.0f, 0.f, 1.f), glm::vec3(0.f, -1.f, 0.f)));
-	lightTransform.push_back(glm::lookAt(position, position + glm::vec3(0.0f, 0.f, -1.f), glm::vec3(0.f, -1.f, 0.f)));
+	lightTransform.push_back(lightProj * glm::lookAt(position, position + glm::vec3(0.0f, 0.f, 1.f), glm::vec3(0.f, -1.f, 0.f)));
+	lightTransform.push_back(lightProj * glm::lookAt(position, position + glm::vec3(0.0f, 0.f, -1.f), glm::vec3(0.f, -1.f, 0.f)));
 	return lightTransform;
 }
 

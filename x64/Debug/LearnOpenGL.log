@@ -1,25 +1,15 @@
-﻿  LearnOpenGL.cpp
-E:\Coding\OpenGLBasics\LearnOpenGL\Window.h(12,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\Window.h(15,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\Window.h(29,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\Window.h(33,10): warning C4244: "return": Konvertierung von "GLint" in "GLfloat", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(92,52): warning C4267: "Initialisierung": Konvertierung von "size_t" nach "unsigned int", Datenverlust möglich
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(172,66): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(172,38): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(180,72): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(180,42): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(194,98): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(194,68): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(194,36): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLint", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(205,64): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(205,39): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(322,64): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(322,39): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(328,64): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(328,39): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(392,88): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(392,63): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(398,99): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(398,74): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLsizei", möglicher Datenverlust
-E:\Coding\OpenGLBasics\LearnOpenGL\LearnOpenGL.cpp(474,15): warning C4244: "Initialisierung": Konvertierung von "double" in "GLfloat", möglicher Datenverlust
+﻿  OmniShadowMap.cpp
+E:\Coding\OpenGLBasics\LearnOpenGL\OmniShadowMap.cpp(17,139): warning C4267: "Argument": Konvertierung von "size_t" nach "GLenum", Datenverlust möglich
+  PointLight.cpp
+E:\Coding\OpenGLBasics\LearnOpenGL\PointLight.cpp(26,14): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLint", möglicher Datenverlust
+E:\Coding\OpenGLBasics\LearnOpenGL\PointLight.cpp(27,14): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLint", möglicher Datenverlust
+E:\Coding\OpenGLBasics\LearnOpenGL\PointLight.cpp(29,14): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLint", möglicher Datenverlust
+E:\Coding\OpenGLBasics\LearnOpenGL\PointLight.cpp(30,14): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLint", möglicher Datenverlust
+E:\Coding\OpenGLBasics\LearnOpenGL\PointLight.cpp(31,14): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLint", möglicher Datenverlust
+E:\Coding\OpenGLBasics\LearnOpenGL\PointLight.cpp(32,14): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLint", möglicher Datenverlust
+E:\Coding\OpenGLBasics\LearnOpenGL\PointLight.cpp(33,14): warning C4244: "Argument": Konvertierung von "GLfloat" in "GLint", möglicher Datenverlust
+  ShadowMap.cpp
+E:\Coding\OpenGLBasics\LearnOpenGL\ShadowMap.cpp(9,22): warning C4244: "=": Konvertierung von "GLfloat" in "GLuint", möglicher Datenverlust
+E:\Coding\OpenGLBasics\LearnOpenGL\ShadowMap.cpp(10,23): warning C4244: "=": Konvertierung von "GLfloat" in "GLuint", möglicher Datenverlust
+  Code wird generiert...
   LearnOpenGL.vcxproj -> E:\Coding\OpenGLBasics\LearnOpenGL\x64\Debug\LearnOpenGL.exe
