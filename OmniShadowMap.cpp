@@ -1,11 +1,9 @@
 #include "OmniShadowMap.h"
 
 OmniShadowMap::OmniShadowMap() : ShadowMap() {
-
 }
 
 bool OmniShadowMap::Init(GLuint width, GLuint height) {
-	std::cout << "Omni Init" << std::endl;
 	shadowWidth = width;
 	shadowHeight = height;
 

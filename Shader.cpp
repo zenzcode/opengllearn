@@ -161,17 +161,8 @@ void Shader::CompileProgram() {
 	uniformDirectionalLightTransform = glGetUniformLocation(shaderID, "directionalLightSpaceTransform");
 	uniformDirectionalShadowMap = glGetUniformLocation(shaderID, "directionalShadowMap");
 
-	uniformOmniLightPos = glGetUniformLocation(shaderID, "lightPos");
-	uniformFarPlane = glGetUniformLocation(shaderID, "farPlane");
 
-	for (size_t i = 0; i < 6; ++i) {
-		char locBuf[100] = { '\0' };
-
-		snprintf(locBuf, sizeof(locBuf), "lightMatrices[%d]", i);
-		uniformLightMatrices[i] = glGetUniformLocation(shaderID, locBuf);
-	}
-
-	for (size_t i = 0; i < MAX_POINT_LIGHTS + MAX_SPOT_LIGHTS; i++) {
+	for (size_t i = 0; i < MAX_POINT_LIGHTS + MAX_SPOT_LIGHTS; ++i) {
 		char locBuf[100] = { '\0' };
 
 		snprintf(locBuf, sizeof(locBuf), "omniShadowMaps[%d].shadowMap", i);
@@ -181,6 +172,16 @@ void Shader::CompileProgram() {
 		uniformOmniShadowMaps[i].farPlane = glGetUniformLocation(shaderID, locBuf);
 	}
 
+
+	uniformOmniLightPos = glGetUniformLocation(shaderID, "lightPos");
+	uniformFarPlane = glGetUniformLocation(shaderID, "farPlane");
+
+	for (size_t i = 0; i < 6; ++i) {
+		char locBuf[100] = { '\0' };
+
+		snprintf(locBuf, sizeof(locBuf), "lightMatrices[%d]", i);
+		uniformLightMatrices[i] = glGetUniformLocation(shaderID, locBuf);
+	}
 	std::cout << "Programm compiled and Linked successfully ID:" << shaderID << std::endl;
 }
 
@@ -193,8 +194,8 @@ void Shader::SetSpotLight(SpotLight* sLight, unsigned int lightCount, unsigned i
 			uniformSpotLight[i].uniformPosition, uniformSpotLight[i].uniformConstant, uniformSpotLight[i].uniformLinear, uniformSpotLight[i].uniformExponent,
 			uniformSpotLight[i].uniformDirection, uniformSpotLight[i].uniformEdge);
 		sLight[i].GetShadowMap()->Read(GL_TEXTURE0 + textureUnit + i);
-		glUniform1i(uniformOmniShadowMaps[i + offset].shadowMap, textureUnit + i);
-		glUniform1f(uniformOmniShadowMaps[i + offset].farPlane, sLight[i].GetFarPlane());
+			glUniform1i(uniformOmniShadowMaps[i + offset].shadowMap, textureUnit + i);
+			glUniform1f(uniformOmniShadowMaps[i + offset].farPlane, sLight[i].GetFarPlane());
 	}
 }
 

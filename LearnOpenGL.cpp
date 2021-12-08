@@ -18,6 +18,7 @@
 #include "SpotLight.h"
 #include "Material.h"
 #include "ModelLoader.h"
+#include "Skybox.h"
 
 static const char* vertex = "Shaders/shader.vert";
 static const char* frag = "Shaders/shader.frag";
@@ -65,6 +66,7 @@ ModelLoader humveeModel;
 ModelLoader planeModel;
 GLuint windowVAO, windowVBO, windowIBO, windowFBO;
 GLuint bigWindowVAO, bigWindowVBO, bigWindowIBO;
+Skybox skyBox;
 
 unsigned int pointLightCount = 0;
 unsigned int spotLightCount = 0;
@@ -296,7 +298,7 @@ void OmniShadowMapPass(PointLight* pointLight) {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glUseProgram(0);
 }
-
+ 
 void DirectionalShadowMapPass(DirectionalLight* dirLight) {
 	directionalShadowShader.UseShader();
 	glViewport(0, 0, dirLight->GetShadowMap()->GetShadowWidth(), dirLight->GetShadowMap()->GetShadowHeight());
@@ -315,28 +317,31 @@ void DirectionalShadowMapPass(DirectionalLight* dirLight) {
 }
 
 void RenderPass(glm::mat4 view, glm::mat4 projection) {
+	glBindFramebuffer(GL_FRAMEBUFFER, windowFBO);
+	glClearColor(0.f, 0.f, 0.f, 1.f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
+	skyBox.DrawSkyBox(projection, view);
 
 	shaderList[0]->UseShader();
 	glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
 	uniformModel = shaderList[0]->GetModelLocation();
 
-	glBindFramebuffer(GL_FRAMEBUFFER, windowFBO);
-	glClearColor(0.f, 0.f, 0.f, 1.f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
-
 	glUniformMatrix4fv(shaderList[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projection));
 	glUniformMatrix4fv(shaderList[0]->GetViewLocation(), 1, GL_FALSE, glm::value_ptr(view));
 	glUniform3f(shaderList[0]->GetUniformEyePosition(), camera->GetCameraPosition().x, camera->GetCameraPosition().y, camera->GetCameraPosition().z);
-	shaderList[0]->SetDirectionalLight(&mainLight);
-	shaderList[0]->SetPointLight(pointLights, pointLightCount, 3, 0);
-	shaderList[0]->SetSpotLight(spotLights, spotLightCount, 3 + pointLightCount, pointLightCount);
+
 	glm::mat4 lightTransform = mainLight.CalculateLightTransform();
 	shaderList[0]->SetDirectionalLightTransform(&lightTransform);
+
+		shaderList[0]->SetDirectionalLight(&mainLight);
+	shaderList[0]->SetPointLight(pointLights, pointLightCount, 3, 0);
+	shaderList[0]->SetSpotLight(spotLights, spotLightCount, 3 + pointLightCount, pointLightCount);
 
 	mainLight.GetShadowMap()->Read(GL_TEXTURE2);
 	shaderList[0]->SetTexture(1);
 	shaderList[0]->SetDirectionalShadowMap(2);
+
 
 	glm::vec3 lowerLight = camera->GetCameraPosition();
 	lowerLight.y -= 0.3f;
@@ -368,22 +373,39 @@ int main()
 	planeModel = ModelLoader();
 	planeModel.LoadModel(plane);
 
-	mainLight = DirectionalLight(2048, 2048, 1.f, 1.f, 1.f, 0.f, 0.f, -7.f, -1.f, 0.f);
-	
-	pointLights[0] = PointLight(1024, 1024, 0.01f, 100.f, 0.0f, 1.0f, 0.0f, 1.0f, 0.f, 0.f, 0.f, .1f, 0.3f, 0.2f, 0.1f);
-	pointLightCount++;
-		
-	pointLights[1] = PointLight(1024, 1024, 0.01f, 100.f, 0.0f, 0.0f, 1.0f, 1.0f, 4.f, 0.f, 0.f, .5f, 0.3f, 0.1f, 0.1f);
-	pointLightCount++;
+	mainLight = DirectionalLight(2048, 2048, 1.f, 1.f, 1.f, 0.1f, 0.f, -7.f, -1.f, 0.3f);
+	//
+	//pointLights[0] = PointLight(1024, 1024, 0.01f, 100.f, 0.0f, 1.0f, 0.0f, 1.0f, 0.f, 0.f, 0.f, .1f, 0.3f, 0.2f, 0.1f);
+	//pointLightCount++;
+	//	
+	//pointLights[1] = PointLight(1024, 1024, 0.01f, 100.f, 0.0f, 0.0f, 1.0f, 1.0f, 4.f, 0.f, 0.f, .5f, 0.3f, 0.1f, 0.1f);
+	//pointLightCount++;
 
 
-	spotLights[0] = SpotLight(1024, 1024, 0.01f, 100.f, 1.f, 1.f, 1.f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.3f, 0.2f, 0.1f, 30.0f);
+	spotLights[0] = SpotLight(1024, 1024,
+		0.1f, 100.f,
+		1.f, 1.f, 1.f,
+		2.f, 
+		0.0f, 0.0f, 0.0f, 
+		0.0f, -1.f, 0.0f, 
+		0.0f, 1.0f, 0.0f, 0.0f, 
+		20.0f);
 
 	spotLightCount++;
+
+	std::vector<std::string> skyBoxImages;
+	skyBoxImages.push_back("Skybox/right.jpg");
+	skyBoxImages.push_back("Skybox/left.jpg");
+	skyBoxImages.push_back("Skybox/top.jpg");
+	skyBoxImages.push_back("Skybox/bottom.jpg");
+	skyBoxImages.push_back("Skybox/front.jpg");
+	skyBoxImages.push_back("Skybox/back.jpg");
+	skyBox = Skybox(skyBoxImages);
 
 
 	shinyMaterial = Material(1.f, 265.f);
 	dullMaterial = Material(.3f, 4.f);
+
 	glm::mat4x4 projection = glm::perspective(glm::radians(45.f), mainWindow->GetBufferWidth() / mainWindow->GetBufferHeight(), 0.1f, 100.f);
 
 	glEnable(GL_CULL_FACE);

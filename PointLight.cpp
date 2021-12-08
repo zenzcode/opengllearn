@@ -18,7 +18,7 @@ PointLight::PointLight(GLfloat shadowWidth, GLfloat shadowHeight, GLfloat near, 
 	float aspect = shadowWidth / shadowHeight;
 	lightProj = glm::perspective(glm::radians(90.f), aspect, near, far);
 
-	shadowMap = new OmniShadowMap();
+	shadowMap = new ShadowMap();
 	shadowMap->Init(shadowWidth, shadowHeight);
 }
 
